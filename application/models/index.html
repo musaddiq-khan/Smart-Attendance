@@ -1,0 +1,66 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Core_db extends CI_Model
+{
+
+
+	function runSQL($sql){
+
+		$q=$this->db->query($sql);
+
+	}
+
+	function getRecords($table, $db = array(), $select = "*", $ordercol = '', $group = '', $start = '', $limit = '')
+	{
+
+		$this->db->select($select);
+		if (!empty($ordercol)) {
+			$this->db->order_by($ordercol);
+		}
+		if ($limit != '' && $start != '') {
+			$this->db->limit($limit, $start);
+		}
+		if ($group != '') {
+			$this->db->group_by($group);
+		}
+		$q = $this->db->get_where($table, $db);
+//echo $this->db->last_query();
+		if ($q->num_rows() > 0)
+
+			return $q->result();
+
+		else
+
+			return 0;
+	}
+
+	function insertRecord($table,$db=array())
+
+	{
+
+		$q=$this->db->insert($table, $db);
+
+		$total = $this->db->insert_id();
+
+		if($total>0)
+
+			return $total;
+
+		else
+
+			return 0;
+
+	}
+
+	function updateRecord($table,$db,$id)
+	{
+		$this->db->where('id',$id);
+		$q=$this->db->update($table,$db);
+		$total = $this->db->affected_rows();
+		if($total>0)
+			return 1;
+		else
+			return 0;
+	}
+
+}
